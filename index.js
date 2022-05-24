@@ -9,24 +9,13 @@ const port = process.env.PORT || 5000
 app.use(cors())
 app.use(express.json());
 
-
-
-
 // pass: 4WhHhG9T04N5ruvo
 // user: admin
 
 
-
-
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.biwft.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
-/* client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  console.log('connect toolsKit')
-  // perform actions on the collection object
-  client.close();
-}); */
+
 
 async function run() {
     try {
@@ -37,7 +26,7 @@ async function run() {
           const query = {}
           const cursor = productsCollection.find(query)
           const result = await cursor.toArray()
-          console.log('from mongo db')
+        //   console.log('from mongo db')
           res.send(result)
       })
      

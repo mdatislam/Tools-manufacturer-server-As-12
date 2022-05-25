@@ -23,9 +23,8 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    const productsCollection = client
-      .db("Tools-manufacturer")
-      .collection("products");
+    const productsCollection = client .db("Tools-manufacturer").collection("products");
+    const orderCollection = client.db("Tools-manufacturer").collection("order")
 
     app.get("/products", async (req, res) => {
       const query = {};
@@ -46,7 +45,7 @@ async function run() {
    app.put('/products/:id', async(req,res)=>{
       const filter = {_id:ObjectId(req.params.id)}
       const updateStock = req.body 
-      console.log(updateStock)
+      // console.log(updateStock)
       const options= {upsert:true}
       const updateDoc ={
         $set:{ stock:updateStock.newStock },
@@ -54,6 +53,13 @@ async function run() {
       const result= await productsCollection.updateOne(filter,updateDoc, options)
       res.send(result)
     }) 
+
+    app.post('/order', async(req,res)=>{
+      const data = req.body
+      // console.log(data)
+      const result =await orderCollection.insertOne(data)
+      return res.send({success:true,result})
+    })
 
     
   } finally {

@@ -23,8 +23,11 @@ const client = new MongoClient(uri, {
 async function run() {
   try {
     await client.connect();
-    const productsCollection = client .db("Tools-manufacturer").collection("products");
-    const orderCollection = client.db("Tools-manufacturer").collection("order")
+    const productsCollection = client
+      .db("Tools-manufacturer")
+      .collection("products");
+    const orderCollection = client.db("Tools-manufacturer").collection("order");
+    const usersCollection = client.db("Tools-manufacturer").collection("user");
 
     app.get("/products", async (req, res) => {
       const query = {};
@@ -34,34 +37,55 @@ async function run() {
       res.send(result);
     });
 
-   app.get("/products/:id", async (req, res) => {
+    app.get("/products/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
       const result = await productsCollection.findOne(filter);
       // console.log(result)
       res.send(result);
-    }); 
+    });
 
-   app.put('/products/:id', async(req,res)=>{
-      const filter = {_id:ObjectId(req.params.id)}
-      const updateStock = req.body 
+    app.put("/products/:id", async (req, res) => {
+      const filter = { _id: ObjectId(req.params.id) };
+      const updateStock = req.body;
       // console.log(updateStock)
-      const options= {upsert:true}
-      const updateDoc ={
-        $set:{ stock:updateStock.newStock },
-      }
-      const result= await productsCollection.updateOne(filter,updateDoc, options)
-      res.send(result)
-    }) 
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: { stock: updateStock.newStock },
+      };
+      const result = await productsCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
+      res.send(result);
+    });
 
-    app.post('/order', async(req,res)=>{
-      const data = req.body
+    app.post("/order", async (req, res) => {
+      const data = req.body;
       // console.log(data)
-      const result =await orderCollection.insertOne(data)
-      return res.send({success:true,result})
-    })
+      const result = await orderCollection.insertOne(data);
+      return res.send({ success: true, result });
+    });
 
-    
+      //To profile update
+
+    app.post("/users", async (req, res) => {
+      const data = req.body;
+      // console.log(data)
+      const result = await usersCollection.insertOne(data);
+      return res.send({ success: true, result });
+    });
+
+    app.get("/order/:email", async (req, res) => {
+      const email = req.params.email;
+      // console.log(email);
+      const filter = {customerEmail:email}
+      const result = await orderCollection
+        .find(filter)
+        .toArray();
+      res.send(result);
+    });
   } finally {
     //   await client.close();
   }

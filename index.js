@@ -70,10 +70,16 @@ async function run() {
 
       //To profile update
 
-    app.post("/users", async (req, res) => {
-      const data = req.body;
-      // console.log(data)
-      const result = await usersCollection.insertOne(data);
+    app.put("/users/:email", async (req, res) => {
+      const email = req.params.email
+      const filter ={email:email}
+      const user = req.body;
+      const options={upsert:true}
+      const updateDoc={
+        $set:user
+      }
+      const result = await usersCollection.updateOne(filter,updateDoc,options)
+     
       return res.send({ success: true, result });
     });
 
@@ -86,6 +92,14 @@ async function run() {
         .toArray();
       res.send(result);
     });
+
+    app.delete('/order/:id',async(req,res)=>{
+      const id = req.params.id
+      const filter = {_id:ObjectId(id)}
+      const result = await orderCollection.deleteOne(filter)
+      return res.send({success:true, result})
+    })
+
   } finally {
     //   await client.close();
   }

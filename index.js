@@ -2,6 +2,7 @@ const express = require("express");
 require("dotenv").config();
 const app = express();
 const cors = require("cors");
+ const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const { options } = require("nodemon/lib/config");
 const port = process.env.PORT || 5000;
@@ -79,8 +80,8 @@ async function run() {
         $set:user
       }
       const result = await usersCollection.updateOne(filter,updateDoc,options)
-     
-      return res.send({ success: true, result });
+     const token = jwt.sign({email:email}, process.env.ACCESS_TOKEN,{ expiresIn: '1h' })
+      return res.send({result,token });
     });
 
     app.get("/order/:email", async (req, res) => {

@@ -105,13 +105,13 @@ async function run() {
       return res.send({ result, token });
     });
 
-    app.get("/order/:email", verifyjwt, async (req, res) => {
+    app.get("/order/:email",verifyjwt, async (req, res) => {
       const email = req.params.email;
-      const requesterEmail = req.decoded.email
-      if (email === requesterEmail) {
-        const filter = { customerEmail: email };
-        const result = await orderCollection.find(filter).toArray();
-        res.send(result);
+       const requesterEmail = req.decoded.email
+       if (email === requesterEmail) {
+      const filter = { customerEmail: email };
+      const result = await orderCollection.find(filter).toArray();
+      res.send(result);
       } else {
         return res.status(403).send({ message: "Forbidden access" });
       }

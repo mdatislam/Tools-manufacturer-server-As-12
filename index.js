@@ -105,21 +105,28 @@ async function run() {
       return res.send({ result, token });
     });
 
-    app.get("/order/:email",verifyjwt, async (req, res) => {
+    app.get("/orders/:email", async (req, res) => {
       const email = req.params.email;
-       const requesterEmail = req.decoded.email
-       if (email === requesterEmail) {
-      const filter = { customerEmail: email };
-      const result = await orderCollection.find(filter).toArray();
-      res.send(result);
-      } else {
+      // const requesterEmail = req.decoded.email;
+     /*  if (email === requesterEmail) { */
+        const filter = { customerEmail: email };
+        const result = await orderCollection.find(filter).toArray();
+        res.send(result);
+      /* } else {
         return res.status(403).send({ message: "Forbidden access" });
-      }
+      } */
     });
 
     app.get("/orders", async (req, res) => {
       const result = await orderCollection.find().toArray();
       res.send(result);
+    });
+
+    app.post("/review", async (req, res) => {
+      const data = req.body;
+      // console.log(data)
+      const result = await orderCollection.insertOne(data);
+      return res.send({ success: true, result });
     });
 
     app.delete("/order/:id", async (req, res) => {

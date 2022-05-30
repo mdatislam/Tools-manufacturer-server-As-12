@@ -44,6 +44,9 @@ async function run() {
       .collection("products");
     const orderCollection = client.db("Tools-manufacturer").collection("order");
     const usersCollection = client.db("Tools-manufacturer").collection("user");
+    const reviewCollection = client
+      .db("Tools-manufacturer")
+      .collection("review");
 
     app.get("/products", async (req, res) => {
       const query = {};
@@ -108,10 +111,10 @@ async function run() {
     app.get("/orders/:email", async (req, res) => {
       const email = req.params.email;
       // const requesterEmail = req.decoded.email;
-     /*  if (email === requesterEmail) { */
-        const filter = { customerEmail: email };
-        const result = await orderCollection.find(filter).toArray();
-        res.send(result);
+      /*  if (email === requesterEmail) { */
+      const filter = { customerEmail: email };
+      const result = await orderCollection.find(filter).toArray();
+      res.send(result);
       /* } else {
         return res.status(403).send({ message: "Forbidden access" });
       } */
@@ -124,9 +127,14 @@ async function run() {
 
     app.post("/review", async (req, res) => {
       const data = req.body;
-      // console.log(data)
-      const result = await orderCollection.insertOne(data);
+      // console.log(data);
+      const result = await reviewCollection.insertOne(data);
       return res.send({ success: true, result });
+    });
+
+    app.get("/review", async (req, res) => {
+      const result = await reviewCollection.find().toArray();
+      return res.send(result);
     });
 
     app.delete("/order/:id", async (req, res) => {

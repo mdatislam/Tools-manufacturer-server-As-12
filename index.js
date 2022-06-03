@@ -133,14 +133,27 @@ async function run() {
     });
 
     app.get("/review", async (req, res) => {
-      const result = await reviewCollection.find().toArray();
+      const result = await reviewCollection.find({}).toArray();
       return res.send(result);
+    });
+
+    app.get("/users", async (req, res) => {
+      const result = await usersCollection.find({}).toArray();
+      res.send(result);
     });
 
     app.delete("/order/:id", async (req, res) => {
       const id = req.params.id;
       const filter = { _id: ObjectId(id) };
       const result = await orderCollection.deleteOne(filter);
+      return res.send({ success: true, result });
+    });
+
+    app.delete("/user/:email", async (req, res) => {
+    const email = req.params.email
+      // console.log(email);
+      const filter = { email: email };
+      const result = await usersCollection.deleteOne(filter);
       return res.send({ success: true, result });
     });
   } finally {
